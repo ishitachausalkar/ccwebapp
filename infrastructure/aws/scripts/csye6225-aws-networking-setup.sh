@@ -27,6 +27,7 @@ echo "3 subnets created"
 
 #Create Internet Gateway
 gatewayId=`aws ec2 create-internet-gateway --query 'InternetGateway.InternetGatewayId' --output text`
+
 #Tag Internet Gateway
 aws ec2 create-tags --resources $gatewayId --tags Key=Name,Value=$STACK_NAME
 echo "Internet gateway created-> gateway Id: "$gatewayId
@@ -42,6 +43,14 @@ echo "Route table created"
 #Tag Route Table
 aws ec2 create-tags --resources $routeTableId --tags Key=Name,Value=$STACK_NAME
 echo "Route table created -> route table Id: "$routeTableId
+
+#Associate route table with subnets
+AssociationId1=`aws ec2 associate-route-table --route-table-id $routeTableId --subnet-id $subnet1 --query 'AssociationId' --output text`
+echo "Route table " $routeTableId " associated with subnet" $subnet1 ", and association id is:" $AssociationId1
+AssociationId2=`aws ec2 associate-route-table --route-table-id $routeTableId --subnet-id $subnet2 --query 'AssociationId' --output text`
+echo "Route table " $routeTableId " associated with subnet" $subnet2 ", and association id is:" $AssociationId2
+AssociationId3=`aws ec2 associate-route-table --route-table-id $routeTableId --subnet-id $subnet3 --query 'AssociationId' --output text`
+echo "Route table " $routeTableId " associated with subnet" $subnet3 ", and association id is:" $AssociationId3
 
 #Create Route
 aws ec2 create-route --route-table-id $routeTableId --destination-cidr-block $cidr_route --gateway-id $gatewayId
