@@ -309,15 +309,19 @@ app.post('/user/register',(req,res)=>{
 				}else{
 					//console.log("result-----",results);
 					if(results){
-						connection.query('INSERT INTO image (id,url) VALUES (?,?)',[imageid,url],function (erro, findRe) {
-							if(erro) res.status(404).json({message:"error occured while inserting image"});
-							if(findRe.affectedRows > 0){
-								res.status(201).json({ message:'created' });
-							}else{
-								res.status(201).json({ message:'created' });
-							}
-						});
-					}else{
+						if(url){
+							connection.query('INSERT INTO image (id,url) VALUES (?,?)',[imageid,url],function (erro, findRe) {
+								if(erro) res.status(404).json({message:"error occured while inserting image"});
+								if(findRe.affectedRows > 0){
+									res.status(201).json({ message:'created' });
+								}else{
+									res.status(201).json({ message:'created' });
+								}
+							});
+						}else{
+							res.status(201).json({ message:'created' });
+						}
+				}else{
 						res.status(400).json({ message:"connection error",err:error });
 					}
 				}
@@ -527,7 +531,7 @@ app.post('/user/register',(req,res)=>{
 	app.delete('/book/:id/image/:imgid', (req, res) => {
 		connection.query('SELECT * FROM book WHERE id =?',[req.params.id],function (erro, find) {
 			if(erro) res.status(403).json({message:"Error occurred"});
-			if(find.length == 0){ res.status(403).json({message:"book does not exists"}); }else{
+			if(find.length == 0){ res.status(204).json({message:"book does not exists"}); }else{
 				if(find[0].image != null){
 					connection.query('SELECT * FROM image WHERE id = ?',[req.params.imgid],function (error,resultSelect, field) {
 						if(error) res.status(204).json({message:"No image Content to delete"}); 
@@ -548,14 +552,14 @@ app.post('/user/register',(req,res)=>{
 								}
 							});
 							}else{
-								res.status(404).json({message:"Image doesnot belong to this book"});	
+								res.status(204).json({message:"Image doesnot belong to this book"});	
 							}
 						}else{
-							res.status(404).json({message:"image does not exists in table"});
+							res.status(204).json({message:"image does not exists in table"});
 						}	
 					});		
 				}else {
-					res.status(404).json({message:"Book does not Exists"});
+					res.status(204).json({message:"image does not exists in table"});
 				}
 			}
 		});	
