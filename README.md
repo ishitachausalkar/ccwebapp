@@ -27,7 +27,7 @@ create 'books' database in mysql and create following table in it
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`username` VARCHAR(255) NOT NULL,
 	`password` VARCHAR(255) NOT NULL,
-	`cdate` TIMESTAMP NOT NULL,
+	`cdate` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (`id`)
 	) ENGINE=InnoDB;
 ```
@@ -46,7 +46,7 @@ To add image field in Book table run following query
 
 ```
 
-ALTER TABLE books ADD COLUMN image VARCHAR(255) AFTER quantity;
+ALTER TABLE book ADD COLUMN image VARCHAR(255) AFTER quantity;
 ```
 
 To create image table with id and url run following query
