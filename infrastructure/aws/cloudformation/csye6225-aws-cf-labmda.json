@@ -27,6 +27,7 @@
                 "ManagedPolicyArns": [
                     "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
                     "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
+                    "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
                     "arn:aws:iam::aws:policy/AmazonSESFullAccess",
                     "arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole"
                 ],
