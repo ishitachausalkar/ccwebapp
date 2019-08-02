@@ -3,7 +3,10 @@ aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE||CREATE_IN_
 echo "Enter name of stack you want to create"
 read Stack_Name
 
-echo "Enter Bucket Name for storing Images"
+echo "Enter Bucket Name for Code Deploy"
+read codedeploybucket
+
+echo "Enter Bucket Name for sotring Images"
 read ImageBucket
 
 echo "Displaying all keys!"
@@ -23,6 +26,9 @@ aws cloudformation describe-stacks --query 'Stacks[*].StackName'
 echo -e "\n"
 echo "Which stack you want to base your app on, input its name"
 read pStackName
+
+echo "What address is used to send Password Reset Link"
+read fromaddr
 
 vpcId=$(aws cloudformation describe-stack-resources --stack-name $pStackName --query 'StackResources[?ResourceType==`AWS::EC2::VPC`].[PhysicalResourceId]' --output text)
 echo "Your app is based on: Stack" $pStackName " and VPC " $vpcId
@@ -85,7 +91,8 @@ file_dir_var="file://$dir_var/csye6225-cf-application.json"
 aws cloudformation create-stack \
 	--stack-name $Stack_Name  \
 	--template-body $file_dir_var \
-	--parameters ParameterKey="keyname",ParameterValue=$KEY_CHOSEN ParameterKey="AmiId",ParameterValue=$amiId 		ParameterKey="subnet1",ParameterValue=$subnet1 ParameterKey="subnet2",ParameterValue=$subnet2 ParameterKey="subnet3",ParameterValue=$subnet3 ParameterKey="vpcId",ParameterValue=$vpcId ParameterKey="vpcname",ParameterValue=$vpcname ParameterKey="NameTag",ParameterValue=$Stack_Name ParameterKey="webappbucket",ParameterValue=$ImageBucket\
+        --capabilities CAPABILITY_NAMED_IAM \
+	--parameters ParameterKey="keyname",ParameterValue=$KEY_CHOSEN ParameterKey="AmiId",ParameterValue=$amiId 		ParameterKey="subnet1",ParameterValue=$subnet1 ParameterKey="subnet2",ParameterValue=$subnet2 ParameterKey="subnet3",ParameterValue=$subnet3 ParameterKey="vpcId",ParameterValue=$vpcId ParameterKey="vpcname",ParameterValue=$vpcname ParameterKey="NameTag",ParameterValue=$Stack_Name ParameterKey="webappbucket",ParameterValue=$ImageBucket ParameterKey="codedeploybucket",ParameterValue=$codedeploybucket ParameterKey="fromaddress",ParameterValue="$fromaddr"\
 	--disable-rollback
 
 

@@ -160,7 +160,8 @@
                   "Ref":"AccessAttachmentToS3Bucket"
                },
                "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
-               "arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess"
+               "arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess",
+               "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
             ],
                 "AssumeRolePolicyDocument":{
                     "Version" : "2012-10-17",
@@ -226,6 +227,35 @@
                 }
             }
         },
+
+        "LambdaExecutionRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": [
+                                "lambda.amazonaws.com"
+                            ]
+                        },
+                        "Action": [
+                            "sts:AssumeRole"
+                        ]
+                    }]
+                },
+                "Path": "/",
+                "ManagedPolicyArns": [
+                    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                    "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
+                    "arn:aws:iam::aws:policy/AmazonSESFullAccess",
+                    "arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole"
+                ],
+                "RoleName": "LambdaExecutionRole"
+            }
+        },
+
         "codedeployapplication":{
             "Type":"AWS::CodeDeploy::Application",
             "Properties":{
