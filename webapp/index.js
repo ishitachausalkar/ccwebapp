@@ -17,6 +17,7 @@ const Config = require('./conf.js');
 const conf = new Config();
 var SDC = require('statsd-client'),
     sdc = new SDC({host: 'localhost'});
+const sns = new aws.SNS();
 
 	const log4js = require('log4js');
 	log4js.configure({
@@ -290,6 +291,40 @@ app.post('/user/register',(req,res)=>{
 					res.status(401).json({ message : 'No such user' });
 				}else{
 					if(results.length > 0){
+
+						console.log("api name last llink",req.url);
+						if(req.url == '/reset'){
+								var abc = {};
+								var arn;
+								var msg;
+								aws.config.update({region:'us-east-1'});
+								var sns = new aws.SNS();
+
+								sns.listTopics(abc, (err, data)=>{
+										if(err){
+												console.log('err in sns listTopics',err);
+										}else{
+												arn = data.Topics[0].TopicArn;
+												msg = username
+
+												var params = {
+														Message : msg,
+														TopicArn: arn
+												};
+												sns.publish(params, (err, data)=>{
+														if(err){
+																console.log("err in sns publish");
+														}
+														else{
+																console.log("sns publish success"+ data);
+																res.json({msg: data});
+														}
+												})
+										}
+								})
+								res.status(200).json({message:'working reset'});
+						}
+
 						bcrypt.compare(password, results[0].password, function(err, resv) {
 							console.log("res---------",resv);    				
 							// res == true
