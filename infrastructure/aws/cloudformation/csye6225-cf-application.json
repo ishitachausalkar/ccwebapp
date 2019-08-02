@@ -25,9 +25,6 @@
        "NameTag":{
          "Type":"String"
        },
-       "fromaddress":{
-         "Type":"String"
-       },
        "codedeploybucket":{
          "Type":"String"
        },
@@ -216,61 +213,8 @@
                 "VPCSecurityGroups" : [ {"Ref": "dbsecuritygroup"}],
                 "StorageType" : "gp2"
             }
-        },
-
-        "MyLambdaFunction": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-                "FunctionName" : "Sentemail",
-                "Handler": "LogEvent::handleRequest",
-                "Role": {
-                    "Fn::GetAtt": [
-                        "LambdaExecutionRole",
-                        "Arn"
-                    ]
-                },
-                "MemorySize":512,
-                "Environment":{
-                    "Variables" : { "fromaddr": {"Ref":"fromaddress"}}
-                },
-                "Code":{
-                    "S3Bucket":{"Ref":"codedeploybucket"},
-                    "S3Key": "csye6225-0.0.1.zip"
-                },
-                "Runtime": "java8",
-                "Timeout": "25"
-            }
-        },
-
-        "LambdaInvokePermission": {
-            "Type": "AWS::Lambda::Permission",
-            "Properties": {
-                "FunctionName": {
-                    "Fn::GetAtt": [
-                        "MyLambdaFunction",
-                        "Arn"
-                    ]
-                },
-                "Action": "lambda:InvokeFunction",
-                "Principal": "sns.amazonaws.com",
-                "SourceArn": {
-                    "Ref":"SNSTopic"
-                }
-            }
-        },
-
-        "SNSTopic" : {
-            "Type" : "AWS::SNS::Topic",
-            "Properties" : {
-                "Subscription" : [
-                    { "Endpoint" : { "Fn::GetAtt" : [ "MyLambdaFunction", "Arn" ] }, "Protocol" : "lambda" }
-                ],
-                "TopicName" : "csye6225reset"
-            }
         }
-
-
-
+        
 
     }
 }

@@ -27,9 +27,6 @@ echo -e "\n"
 echo "Which stack you want to base your app on, input its name"
 read pStackName
 
-echo "What address is used to send Password Reset Link"
-read fromaddr
-
 vpcId=$(aws cloudformation describe-stack-resources --stack-name $pStackName --query 'StackResources[?ResourceType==`AWS::EC2::VPC`].[PhysicalResourceId]' --output text)
 echo "Your app is based on: Stack" $pStackName " and VPC " $vpcId
 
@@ -92,7 +89,7 @@ aws cloudformation create-stack \
 	--stack-name $Stack_Name  \
 	--template-body $file_dir_var \
         --capabilities CAPABILITY_NAMED_IAM \
-	--parameters ParameterKey="keyname",ParameterValue=$KEY_CHOSEN ParameterKey="AmiId",ParameterValue=$amiId 		ParameterKey="subnet1",ParameterValue=$subnet1 ParameterKey="subnet2",ParameterValue=$subnet2 ParameterKey="subnet3",ParameterValue=$subnet3 ParameterKey="vpcId",ParameterValue=$vpcId ParameterKey="vpcname",ParameterValue=$vpcname ParameterKey="NameTag",ParameterValue=$Stack_Name ParameterKey="webappbucket",ParameterValue=$ImageBucket ParameterKey="codedeploybucket",ParameterValue=$codedeploybucket ParameterKey="fromaddress",ParameterValue="$fromaddr"\
+	--parameters ParameterKey="keyname",ParameterValue=$KEY_CHOSEN ParameterKey="AmiId",ParameterValue=$amiId 		ParameterKey="subnet1",ParameterValue=$subnet1 ParameterKey="subnet2",ParameterValue=$subnet2 ParameterKey="subnet3",ParameterValue=$subnet3 ParameterKey="vpcId",ParameterValue=$vpcId ParameterKey="vpcname",ParameterValue=$vpcname ParameterKey="NameTag",ParameterValue=$Stack_Name ParameterKey="webappbucket",ParameterValue=$ImageBucket ParameterKey="codedeploybucket",ParameterValue=$codedeploybucket \
 	--disable-rollback
 
 
