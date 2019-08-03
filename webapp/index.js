@@ -294,6 +294,7 @@ app.post('/user/register',(req,res)=>{
 
 						console.log("api name last llink",req.url);
 						if(req.url == '/reset'){
+								sdc.increment('reset api triggered');
 								var abc = {};
 								var arn;
 								var msg;
@@ -311,18 +312,21 @@ app.post('/user/register',(req,res)=>{
 														Message : msg,
 														TopicArn: arn
 												};
+												console.log('params------',params);
 												sns.publish(params, (err, data)=>{
 														if(err){
-																console.log("err in sns publish");
-														}
-														else{
-																console.log("sns publish success"+ data);
-																res.json({msg: data});
+															console.log("err in sns publish",err);
+															logger.error('error in sns');
+															res.status(400).json({message:'error'});
+														}else{
+															console.log("sns publish success",data);
+															logger.info('sns triggered succesfully');
+															//res.json({msg: data});
+															res.status(201).json({message:'created'});
 														}
 												})
 										}
 								})
-								res.status(200).json({message:'working reset'});
 						}
 
 						bcrypt.compare(password, results[0].password, function(err, resv) {
