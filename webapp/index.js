@@ -62,7 +62,7 @@ connection.connect(function(err) {
 		    if(find.warningCount == 1) { console.log("users already exists"); }
 		    else{ logger.info('users table created successfully'); console.log(find,"users table created successfully"); }
 		});
-		connection.query('CREATE TABLE IF NOT EXISTS `book` (`id` VARCHAR(255) NOT NULL,`title` VARCHAR(255) NOT NULL,`author` VARCHAR(100) NULL,`isbn` VARCHAR(255) NULL,`quantity` INT NULL,`image` VARCHAR(255),PRIMARY KEY (`id`));',function (erro, find) {
+		connection.query('CREATE TABLE IF NOT EXISTS `book` (`bid` INT NOT NULL AUTO_INCREMENT,`id` VARCHAR(255) NOT NULL,`title` VARCHAR(255) NOT NULL,`author` VARCHAR(100) NULL,`isbn` VARCHAR(255) NULL,`quantity` INT NULL,`image` VARCHAR(255),PRIMARY KEY (`bid`));',function (erro, find) {
 		    if(find.warningCount == 1) { console.log("books already exists"); }
 		    else{ logger.info('book table created successfully'); console.log(find,"book table created successfully"); }
 		});
@@ -271,7 +271,7 @@ app.post('/user/register',(req,res)=>{
 	// global authorization check app
 	app.all('*',function(req,res,next){
 		if (!req.headers.authorization || req.headers.authorization.indexOf('Basic ') === -1) {
-			logger.error('password not containg nist stadards');  
+			logger.error('user authorization headers not available');  
 			return res.status(401).json({ message: 'User not logged in' });
 		}else{
 			var header=req.headers['authorization']||'',
@@ -323,23 +323,23 @@ app.post('/user/register',(req,res)=>{
 												})
 										}
 								})
+						}else{
+							bcrypt.compare(password, results[0].password, function(err, resv) {
+								console.log("res---------",resv);    				
+								// res == true
+								if (error){
+									logger.error(error);
+									throw error;	
+								} 	
+								if(resv){
+									next();
+									//res.json({ crrdate : new Date().toISOString() });
+								}else{
+									logger.error('password does not match');
+									res.status(401).json({ message : 'password does not match' });
+								}
+							});	
 						}
-
-						bcrypt.compare(password, results[0].password, function(err, resv) {
-							console.log("res---------",resv);    				
-							// res == true
-							if (error){
-								logger.error(error);
-								throw error;	
-							} 	
-							if(resv){
-								next();
-								//res.json({ crrdate : new Date().toISOString() });
-							}else{
-								logger.error('password does not match');
-								res.status(401).json({ message : 'password does not match' });
-							}
-						});	
 					}else{
 						logger.error('user does not exists');
 						console.log('Data is false', results.length)
@@ -561,6 +561,7 @@ app.post('/user/register',(req,res)=>{
 					logger.error(error); 
 					throw res.status(400).json({ message:"connection error",err:error });
 				}else{
+					let newr = results;
 					//console.log("result-----",results);
 					if(results){
 						if(url){
@@ -569,14 +570,33 @@ app.post('/user/register',(req,res)=>{
 									logger.error("error occured while inserting image"); 
 									res.status(404).json({message:"error occured while inserting image"});
 								}
+								
 								if(findRe.affectedRows > 0){
-									res.status(201).json({ message:'created' });
+									connection.query('SELECT * FROM book ORDER BY bid DESC LIMIT 1',function (erro, bookinfo) {
+										if(erro){
+											res.status(403).json({"message":erro});
+										}else{
+											res.status(200).json(bookinfo);
+										}
+									})
 								}else{
-									res.status(201).json({ message:'created' });
+									connection.query('SELECT * FROM book ORDER BY bid DESC LIMIT 1',function (erro, bookinfo) {
+										if(erro){
+											res.status(403).json({"message":erro});
+										}else{
+											res.status(200).json(bookinfo);
+										}
+									})
 								}
 							});
 						}else{
-							res.status(201).json({ message:'created' });
+							connection.query('SELECT * FROM book ORDER BY bid DESC LIMIT 1',function (erro, bookinfo) {
+								if(erro){
+									res.status(403).json({"message":erro});
+								}else{
+									res.status(200).json(bookinfo);
+								}
+							})
 						}
 				}else{
 					logger.error(error); 
