@@ -143,10 +143,10 @@
                 "LaunchConfigurationName": {
                     "Ref": "asglaunchconfig"
                 },
-                "MinSize": "3",
-                "MaxSize": "7",
                 "Cooldown": "60",
                 "DesiredCapacity":"3",
+                "MaxSize": "7",
+                "MinSize": "3",
                 "TargetGroupARNs": [
                     {
                         "Ref": "ALBTargetGroup"
