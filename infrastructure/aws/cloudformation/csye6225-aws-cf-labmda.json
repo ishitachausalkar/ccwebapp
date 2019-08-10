@@ -46,7 +46,7 @@
 					"S3Bucket": {
 						"Ref": "codedeploybucket"
 					},
-					"S3Key": "lambdaInitial.zip"
+					"S3Key": "lambdasendmail.zip"
 				},
 				"Runtime": "nodejs8.10",
 				"Timeout": "25"
